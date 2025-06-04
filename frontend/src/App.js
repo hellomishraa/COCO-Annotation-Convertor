@@ -1,4 +1,4 @@
-// // V1 Starts
+// // V1 Starts : Running on localhost with basic UI.
 // import React, { useState } from 'react';
 // import axios from 'axios';
 
@@ -99,7 +99,7 @@
 
 // // V1 Ends
 
-// // V2 Starts
+// // V2 Starts : UI Upgraded, on localhost.
 // import React, { useState } from 'react';
 // import axios from 'axios';
 
@@ -252,7 +252,7 @@
 
 // // V2 Ends
 
-// V3 Starts
+// V3 Starts : All UI Changes done. On the localhost, V4 is there for render.
 // import React, { useState } from 'react';
 // import axios from 'axios';
 
@@ -449,6 +449,7 @@ function App() {
   const [imageMasks, setImageMasks] = useState({});
 
   const toggleTheme = () => setDarkMode(!darkMode);
+  const [masksLoading, setMasksLoading] = useState(false); // For Wait message
 
   const handleFileChange = async (e) => {
     const uploadedFile = e.target.files[0];
@@ -466,6 +467,14 @@ function App() {
       setCategories(res.data);
       setUploadStatus('✅ File uploaded successfully!');
 
+      // Loading message for mask.
+      setMasksLoading(true);
+      let maskForm = new FormData();
+      maskForm.append('file', uploadedFile);
+      let maskRes = await axios.post(`${API_BASE}/preview-masks`, maskForm);
+      setImageMasks(maskRes.data);
+      setMasksLoading(false);
+
       const reader = new FileReader();
       reader.onload = () => {
         const data = JSON.parse(reader.result);
@@ -479,10 +488,10 @@ function App() {
       };
       reader.readAsText(uploadedFile);
 
-      const maskForm = new FormData();
+      maskForm = new FormData();
       maskForm.append('file', uploadedFile);
       // const maskRes = await axios.post('http://127.0.0.1:5000/preview-masks', maskForm);
-      const maskRes = await axios.post(`${API_BASE}/preview-masks`, maskForm); // For render backend
+      maskRes = await axios.post(`${API_BASE}/preview-masks`, maskForm); // For render backend
       setImageMasks(maskRes.data);
 
     } catch {
@@ -592,6 +601,12 @@ function App() {
             marginBottom: '10px'
           }}
 />
+        {masksLoading && (
+          <p style={{ textAlign: 'center', fontStyle: 'italic', marginTop: '10px' }}>
+            🧠 Masks loading, please wait...
+          </p>
+        )}
+
         {uploadStatus && <p style={{ marginTop: '5px', fontWeight: 'bold' }}>{uploadStatus}</p>}
 
         <div style={{ marginTop: '20px' }}>
