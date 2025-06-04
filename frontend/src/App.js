@@ -434,7 +434,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API_BASE = 'https://backend-coco-cvat.onrender.com';
+const API_BASE = 'https://backend-coco-cvat.onrender.com'; // For localhost, remove the line.
 
 function App() {
   const [file, setFile] = useState(null);
@@ -462,7 +462,7 @@ function App() {
       const formData = new FormData();
       formData.append('file', uploadedFile);
       // const res = await axios.post('http://127.0.0.1:5000/get-categories', formData);
-      const res = await axios.post(`${API_BASE}/get-categories`, formData);
+      const res = await axios.post(`${API_BASE}/get-categories`, formData); // For render backend
       setCategories(res.data);
       setUploadStatus('✅ File uploaded successfully!');
 
@@ -482,7 +482,7 @@ function App() {
       const maskForm = new FormData();
       maskForm.append('file', uploadedFile);
       // const maskRes = await axios.post('http://127.0.0.1:5000/preview-masks', maskForm);
-      const maskRes = await axios.post(`${API_BASE}/preview-masks`, maskForm);
+      const maskRes = await axios.post(`${API_BASE}/preview-masks`, maskForm); // For render backend
       setImageMasks(maskRes.data);
 
     } catch {
@@ -510,7 +510,7 @@ function App() {
     setIsUploading(true);
     try {
       // const res = await axios.post('http://127.0.0.1:5000/process', formData, { responseType: 'blob' });
-      const res = await axios.post(`${API_BASE}/process`, formData, { responseType: 'blob' });
+      const res = await axios.post(`${API_BASE}/process`, formData, { responseType: 'blob' }); // For render backend
       const url = window.URL.createObjectURL(new Blob([res.data]));
       setDownloadUrl(url);
     } catch (err) {
