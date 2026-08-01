@@ -48,7 +48,7 @@ function App() {
     try {
       const formData = new FormData();
       formData.append('file', uploadedFile);
-      // const res = await axios.post('http://127.0.0.1:5000/get-categories', formData);
+      // const res = await axios.post('http://127.0.0.1:8085/get-categories', formData);
       const res = await axios.post(`${API_BASE}/get-categories`, formData); // For render backend
       setCategories(res.data);
       setUploadStatus('✅ File uploaded successfully!');
@@ -57,7 +57,7 @@ function App() {
       setMasksLoading(true);
       let maskForm = new FormData();
       maskForm.append('file', uploadedFile);
-      // let maskRes = await axios.post('http://127.0.0.1:5000/preview-masks', maskForm);
+      // let maskRes = await axios.post('http://127.0.0.1:8085/preview-masks', maskForm);
       let maskRes = await axios.post(`${API_BASE}/preview-masks`, maskForm);
       setImageMasks(maskRes.data);
       setMasksLoading(false);
@@ -99,7 +99,7 @@ function App() {
 
     setIsUploading(true);
     try {
-      // const res = await axios.post('http://127.0.0.1:5000/process', formData, { responseType: 'blob' });
+      // const res = await axios.post('http://127.0.0.1:8085/process', formData, { responseType: 'blob' });
       const res = await axios.post(`${API_BASE}/process`, formData, { responseType: 'blob' }); // For render backend
       const url = window.URL.createObjectURL(new Blob([res.data]));
       setDownloadUrl(url);
@@ -128,7 +128,7 @@ function App() {
 
     try {
       const res = await axios.post(`${API_BASE}/get-compressed-image`, formData, {
-      // const res = await axios.post('http://127.0.0.1:5000/get-compressed-image', formData, {
+      // const res = await axios.post('http://127.0.0.1:8085/get-compressed-image', formData, {
         responseType: 'blob',
         timeout: 30000, // abort if the request stalls for 30s (e.g. very weak connection)
         onUploadProgress: (progressEvent) => {
