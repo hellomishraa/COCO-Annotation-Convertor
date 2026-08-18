@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_BASE = 'https://backend-coco-cvat.onrender.com'; // For localhost, remove the line.
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://127.0.0.1:8085';
 
 function App() {
   const [file, setFile] = useState(null);
