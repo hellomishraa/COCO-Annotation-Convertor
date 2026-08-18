@@ -15,6 +15,7 @@ function App() {
   const [uploadStatus, setUploadStatus] = useState('');
   const [imageMasks, setImageMasks] = useState({});
   const [compressFile, setCompressFile] = useState(null);
+  const [compressOriginalFilename, setCompressOriginalFilename] = useState('');
   const [compressDownloadUrl, setCompressDownloadUrl] = useState(null);
   const [isCompressing, setIsCompressing] = useState(false);
   const [compressExt, setCompressExt] = useState(null);
@@ -243,7 +244,13 @@ function App() {
               type="file"
               accept="image/*"
               onChange={(e) => {
-                setCompressFile(e.target.files[0]);
+                const selectedFile = e.target.files[0];
+                setCompressFile(selectedFile);
+                if (selectedFile) {
+                  // Extract filename without extension
+                  const nameWithoutExt = selectedFile.name.replace(/\.[^/.]+$/, '');
+                  setCompressOriginalFilename(nameWithoutExt);
+                }
                 setCompressDownloadUrl(null);
                 setCompressError('');
                 setCompressProgress(0);
@@ -257,7 +264,7 @@ function App() {
                 : 'Compress'}
             </button>
             {compressDownloadUrl && (
-              <a href={compressDownloadUrl} download={`compressed.${compressExt || 'png'}`}>📥 Download</a>
+              <a href={compressDownloadUrl} download={`${compressOriginalFilename || 'image'}_compressed.png`}>📥 Download</a>
             )}
           </div>
 
@@ -420,5 +427,3 @@ function App() {
 }
 
 export default App;
-
-// V4 Ends
