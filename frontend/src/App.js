@@ -18,7 +18,6 @@ function App() {
   const [compressOriginalFilename, setCompressOriginalFilename] = useState('');
   const [compressDownloadUrl, setCompressDownloadUrl] = useState(null);
   const [isCompressing, setIsCompressing] = useState(false);
-  const [compressExt, setCompressExt] = useState(null);
   const [compressProgress, setCompressProgress] = useState(0);
   const [compressError, setCompressError] = useState('');
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -131,7 +130,7 @@ function App() {
       const res = await axios.post(`${API_BASE}/get-compressed-image`, formData, {
       // const res = await axios.post('http://127.0.0.1:8085/get-compressed-image', formData, {
         responseType: 'blob',
-        timeout: 30000, // abort if the request stalls for 30s (e.g. very weak connection)
+        timeout: 120000, // 2 minutes timeout for large images
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
             const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -154,19 +153,17 @@ function App() {
       const blob = new Blob([res.data], { type: contentType });
       const url = window.URL.createObjectURL(blob);
 
-      // Derive extension from content-type so the filename matches (e.g. "png", "jpeg")
-      const ext = contentType.split('/')[1] || 'png';
-
       setCompressDownloadUrl(url);
-      setCompressExt(ext); // used to build filename with correct extension
     } catch (err) {
       console.error('Compression error:', err);
       let message = err.message;
 
       if (err.code === 'ECONNABORTED') {
-        message = 'Request timed out — your connection may be too slow. Please try again.';
+        message = 'Request timed out after 2 minutes. The image may be too large or the server is slow. Please try a smaller image.';
       } else if (!err.response) {
         message = 'Network error — could not reach the server. Check your internet connection.';
+      } else if (err.response?.status === 500) {
+        message = 'Server error while processing the image. The file may have an unsupported format or be corrupted.';
       } else if (err.response.data instanceof Blob) {
         // responseType: 'blob' means even error bodies arrive as Blobs, not parsed JSON
         try {
@@ -245,12 +242,29 @@ function App() {
               accept="image/*"
               onChange={(e) => {
                 const selectedFile = e.target.files[0];
-                setCompressFile(selectedFile);
+                
                 if (selectedFile) {
+                  // Validate file extension
+                  const validExtensions = /\.(jpg|jpeg|png|gif|webp|bmp)$/i;
+                  if (!validExtensions.test(selectedFile.name)) {
+                    setCompressError('❌ Invalid file type. Please upload a valid image (jpg, jpeg, png, gif, webp, bmp).');
+                    setCompressFile(null);
+                    setCompressOriginalFilename('');
+                    setCompressDownloadUrl(null);
+                    setCompressProgress(0);
+                    e.target.value = ''; // Clear the file input
+                    return;
+                  }
+                  
                   // Extract filename without extension
                   const nameWithoutExt = selectedFile.name.replace(/\.[^/.]+$/, '');
                   setCompressOriginalFilename(nameWithoutExt);
+                  setCompressFile(selectedFile);
+                } else {
+                  setCompressFile(null);
+                  setCompressOriginalFilename('');
                 }
+                
                 setCompressDownloadUrl(null);
                 setCompressError('');
                 setCompressProgress(0);
