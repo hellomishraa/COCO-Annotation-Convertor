@@ -1,8 +1,11 @@
 name: Resume Render service on Monday
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    types: [opened, synchronize, reopened]
+
   schedule:
     # Mon 00:00 IST = Sun 18:30 UTC
     - cron: "30 18 * * 0"

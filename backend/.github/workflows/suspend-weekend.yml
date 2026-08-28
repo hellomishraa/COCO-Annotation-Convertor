@@ -1,8 +1,11 @@
 name: Suspend Render service for weekend
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    types: [opened, synchronize, reopened]
+
   schedule:
     # Sat 00:00 IST = Fri 18:30 UTC
     - cron: "30 18 * * 5"
