@@ -1,0 +1,18 @@
+name: Resume Render service on Monday
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    # Mon 00:00 IST = Sun 18:30 UTC
+    - cron: "30 18 * * 0"
+  workflow_dispatch: {}
+
+jobs:
+  resume:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resume service
+        run: |
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_BACKEND_ANNOTATION_CONVERTOR }}/resume" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
