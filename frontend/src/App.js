@@ -256,8 +256,8 @@ function App() {
                     return;
                   }
                   
-                  // Extract filename without extension
-                  const nameWithoutExt = selectedFile.name.replace(/\.[^/.]+$/, '');
+                  // Extract filename
+                  const nameWithoutExt = selectedFile.name.split('.')[0];
                   setCompressOriginalFilename(nameWithoutExt);
                   setCompressFile(selectedFile);
                 } else {
